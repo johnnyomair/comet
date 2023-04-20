@@ -1,0 +1,5 @@
+---
+"@comet/cli": patch
+---
+
+Test

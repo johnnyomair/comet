@@ -37,7 +37,7 @@ jobs:
               uses: dotansimha/changesets-action@cbc5ff3569ae9861100a48b290f4e9c1b94e45b5
               with:
                   version: ./update-version.sh
-                  publish: echo "Publish"
+                  publish: echo "🦋  info @comet/cli is being published because our local version (4.1.1) has not been published on npm\n🦋  info Publishing "@comet/cli" at "4.1.1"\n🦋  success packages published successfully:\n🦋  @comet/cli@4.1.1\n🦋  info @comet/eslint-config is being published because our local version (4.1.1) has not been published on npm\n🦋  info Publishing "@comet/eslint-config" at "4.1.1"\n🦋  success packages published successfully:\n🦋  @comet/eslint-config@4.1.1"
                   createGithubReleases: aggregate
                   githubReleaseName: "Release ${{ steps.vars.outputs.sha_short }} (from ${{ steps.vars.outputs.branch }})"
                   githubTagName: "Test"
