@@ -36,6 +36,7 @@ jobs:
               id: changesets
               uses: dotansimha/changesets-action@v1.3.3
               with:
+                  version: ./update-version.sh
                   publish: echo "Publish"
                   createGithubReleases: aggregate
                   githubReleaseName: "Release ${{ steps.vars.outputs.sha_short }} (from ${{ steps.vars.outputs.branch }})"
