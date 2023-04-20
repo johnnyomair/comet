@@ -1,9 +1,9 @@
 name: i18n
 
-on:
-    push:
-        branches:
-            - main
+# on:
+#     push:
+#         branches:
+#             - main
 
 jobs:
     i18n:

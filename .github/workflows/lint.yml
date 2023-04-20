@@ -1,19 +1,19 @@
 name: Lint
 
-on:
-    pull_request:
-        types:
-            - opened
-            - synchronize
-            - reopened
-            - closed
-        branches:
-            - main
-            - next
-    push:
-        branches:
-            - main
-            - next
+# on:
+#     pull_request:
+#         types:
+#             - opened
+#             - synchronize
+#             - reopened
+#             - closed
+#         branches:
+#             - main
+#             - next
+#     push:
+#         branches:
+#             - main
+#             - next
 
 jobs:
     lint:
