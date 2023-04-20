@@ -1,5 +1,11 @@
 # @comet/admin-react-select
 
+## 4.1.1
+
+### Patch Changes
+
+-   @comet/admin@4.1.1
+
 ## 4.1.0
 
 ### Patch Changes
