@@ -2558,6 +2558,10 @@ importers:
         specifier: ^4.0.0
         version: 4.9.4
 
+  packages/test1: {}
+
+  packages/test2: {}
+
 packages:
 
   /@ampproject/remapping@2.2.0:

@@ -37,7 +37,7 @@ jobs:
               uses: dotansimha/changesets-action@cbc5ff3569ae9861100a48b290f4e9c1b94e45b5
               with:
                   version: ./update-version.sh
-                  publish: ./fake-publish.sh
+                  publish: pnpm run publish
                   createGithubReleases: aggregate
                   githubReleaseName: "Release ${{ steps.vars.outputs.sha_short }} (from ${{ steps.vars.outputs.branch }})"
                   githubTagName: "Test"
