@@ -1,0 +1,8 @@
+echo "🦋  info @comet/cli is being published because our local version (4.1.1) has not been published on npm"
+echo "🦋  info Publishing \"@comet/cli\" at \"4.1.1\""
+echo "🦋  success packages published successfully:"
+echo "🦋  @comet/cli@4.1.1"
+echo "🦋  info @comet/eslint-config is being published because our local version (4.1.1) has not been published on npm"
+echo "🦋  info Publishing \"@comet/eslint-config\" at \"4.1.1\""
+echo "🦋  success packages published successfully:"
+echo "🦋  @comet/eslint-config@4.1.1"
