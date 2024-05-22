@@ -1,5 +1,146 @@
 # @comet/admin-color-picker
 
+## 7.0.0-beta.0
+
+### Major Changes
+
+-   b87c3c29: Replace the `componentsProps` prop with `slotProps` in `ColorPicker` and remove the `ColorPickerComponentsProps` type
+-   cb544bc: Remove `clearable` prop and add a `required` prop to `ColorPicker`
+
+    The clear button will automatically be shown for all optional fields.
+
+-   92eae2ba: Change the method of overriding the styling of Admin components
+
+    -   Remove dependency on the legacy `@mui/styles` package in favor of `@mui/material/styles`.
+    -   Add the ability to style components using [MUI's `sx` prop](https://mui.com/system/getting-started/the-sx-prop/).
+    -   Add the ability to style individual elements (slots) of a component using the `slotProps` and `sx` props.
+    -   The `# @comet/admin-color-picker syntax in the theme's `styleOverrides` is no longer supported, see: https://mui.com/material-ui/migration/v5-style-changes/#migrate-theme-styleoverrides-to-emotion
+
+    ```diff
+     const theme = createCometTheme({
+         components: {
+             CometAdminMyComponent: {
+                 styleOverrides: {
+    -                root: {
+    -                    "&$hasShadow": {
+    -                        boxShadow: "2px 2px 5px 0 rgba(0, 0, 0, 0.25)",
+    -                    },
+    -                    "& $header": {
+    -                        backgroundColor: "lime",
+    -                    },
+    -                },
+    +                hasShadow: {
+    +                    boxShadow: "2px 2px 5px 0 rgba(0, 0, 0, 0.25)",
+    +                },
+    +                header: {
+    +                    backgroundColor: "lime",
+    +                },
+                 },
+             },
+         },
+     });
+    ```
+
+    -   Overriding a component's styles using `withStyles` is no longer supported. Use the `sx` and `slotProps` props instead:
+
+    ```diff
+    -import { withStyles } from "@mui/styles";
+    -
+    -const StyledMyComponent = withStyles({
+    -    root: {
+    -        backgroundColor: "lime",
+    -    },
+    -    header: {
+    -        backgroundColor: "fuchsia",
+    -    },
+    -})(MyComponent);
+    -
+    -// ...
+    -
+    -<StyledMyComponent title="Hello World" />;
+    +<MyComponent
+    +    title="Hello World"
+    +    sx={{
+    +        backgroundColor: "lime",
+    +    }}
+    +    slotProps={{
+    +        header: {
+    +            sx: {
+    +                backgroundColor: "fuchsia",
+    +            },
+    +        },
+    +    }}
+    +/>
+    ```
+
+    -   The module augmentation for the `DefaultTheme` type from `@mui/styles/defaultTheme` is no longer needed and needs to be removed from the admins theme file, usually located in `admin/src/theme.ts`:
+
+    ```diff
+    -declare module "@mui/styles/defaultTheme" {
+    -    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    -    export interface DefaultTheme extends Theme {}
+    -}
+    ```
+
+    -   Class-keys originating from MUI components have been removed from Comet Admin components, causing certain class-names and `styleOverrides` to no longer be applied.
+        The components `root` class-key is not affected. Other class-keys will retain the class-names and `styleOverrides` from the underlying MUI component.
+        For example, in `ClearInputAdornment` (when used with `position="end"`) the class-name `CometAdminClearInputAdornment-positionEnd` and the `styleOverrides` for `CometAdminClearInputAdornment.positionEnd` will no longer be applied.
+        The component will retain the class-names `MuiInputAdornment-positionEnd`, `MuiInputAdornment-root`, and `CometAdminClearInputAdornment-root`.
+        Also, the `styleOverrides` for `MuiInputAdornment.positionEnd`, `MuiInputAdornment.root`, and `CometAdminClearInputAdornment.root` will continue to be applied.
+
+        This affects the following components:
+
+        -   `AppHeader`
+        -   `AppHeaderMenuButton`
+        -   `ClearInputAdornment`
+        -   `Tooltip`
+        -   `CancelButton`
+        -   `DeleteButton`
+        -   `OkayButton`
+        -   `SaveButton`
+        -   `StackBackButton`
+        -   `DatePicker`
+        -   `DateRangePicker`
+        -   `TimePicker`
+
+    -   For more details, see MUI's migration guide: https://mui.com/material-ui/migration/v5-style-changes/#mui-styles
+
+### Patch Changes
+
+-   b5753e61: Allow partial props in the theme's `defaultProps` instead of requiring all props when setting the `defaultProps` of a component
+-   Updated dependencies [865f253d]
+-   Updated dependencies [05ce68ec]
+-   Updated dependencies [51a0861d]
+-   Updated dependencies [54f7754]
+-   Updated dependencies [73140014]
+-   Updated dependencies [6054fdca]
+-   Updated dependencies [d0869ac]
+-   Updated dependencies [47ec528a]
+-   Updated dependencies [956111ab]
+-   Updated dependencies [19eaee4c]
+-   Updated dependencies [758c6565]
+-   Updated dependencies [04ed68cc]
+-   Updated dependencies [4ca4830]
+-   Updated dependencies [3397ec1]
+-   Updated dependencies [20b2bafd]
+-   Updated dependencies [8e3dec5]
+-   Updated dependencies [51a0861d]
+-   Updated dependencies [b5753e61]
+-   Updated dependencies [2a7bc765]
+-   Updated dependencies [f8114cd3]
+-   Updated dependencies [b87c3c29]
+-   Updated dependencies [2a7bc765]
+-   Updated dependencies [d2e64d1e]
+-   Updated dependencies [241249bd]
+-   Updated dependencies [be4e6392]
+-   Updated dependencies [a5354543]
+-   Updated dependencies [1a1d8315]
+-   Updated dependencies [a2f278bb]
+-   Updated dependencies [66330e4e]
+-   Updated dependencies [92eae2ba]
+    -   @comet/admin@7.0.0-beta.0
+    -   @comet/admin-icons@7.0.0-beta.0
+
 ## 6.10.0
 
 ### Patch Changes
