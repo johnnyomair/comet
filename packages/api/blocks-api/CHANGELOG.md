@@ -1,5 +1,11 @@
 # @comet/blocks-api
 
+## 7.0.0-beta.1
+
+### Major Changes
+
+-   107df9f: Test change
+
 ## 7.0.0-beta.0
 
 ### Major Changes
