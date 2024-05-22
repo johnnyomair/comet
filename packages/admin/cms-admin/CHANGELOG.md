@@ -1,5 +1,246 @@
 # @comet/cms-admin
 
+## 7.0.0-beta.0
+
+### Major Changes
+
+-   f7454452: Change language field in User and CurrentUser to locale
+-   0588e21: Remove `locale`-field from `User`-object
+
+    -   Providing the locale is not mandatory for ID-Tokens
+    -   Does not have a real use case (better rely on the Accept-Language header of the browser to determine the language of the current user)
+
+-   865f253d: Add `@comet/admin-theme` as a peer dependency
+
+    `@comet/cms-admin` now uses the custom `Typography` variants `list` and `listItem` defined in `@comet/admin-theme`.
+
+-   0e6debb0: CRUD Generator: Remove `lastUpdatedAt` argument from update mutations
+-   2abc096: Replace the `ContentScopeIndicator` with a new version intended for use in the new `Toolbar`
+
+    The old `ContentScopeIndicator` was a purely cosmetic component. Hence, the logic for displaying the current scope had to be implemented in the project (usually in a project-internal `ContentScopeIndicator` component).
+
+    The new `ContentScopeIndicator` has the logic for displaying the current scope built-in. Thus, you can remove your project's `ContentScopeIndicator` implementation and directly use the `ContentScopeIndicator` from this library.
+
+    Usage:
+
+    -   Per default, the `ContentScopeIndicator` displays the current `ContentScope`
+    -   Pass a scope object via the `scope` prop if your page has a custom scope
+    -   Pass the `global` prop if your page has no scope
+    -   Pass `children` if you want to render completely custom content
+
+-   ebf59712: Remove unused/unnecessary peer dependencies
+
+    Some dependencies were incorrectly marked as peer dependencies.
+    If you don't use them in your application, you may remove the following dependencies:
+
+    -   Admin: `axios`
+    -   API: `@aws-sdk/client-s3`, `@azure/storage-blob` and `pg-error-constants`
+
+-   ae014202: Support single host for block preview
+
+    The content scope is passed through the iframe-bridge in the admin and accessible in the site in the IFrameBridgeProvider.
+    Breaking: `previewUrl`-property of `SiteConfig` has changed to `blockPreviewBaseUrl`
+
+-   92eae2ba: Change the method of overriding the styling of Admin components
+
+    -   Remove dependency on the legacy `@mui/styles` package in favor of `@mui/material/styles`.
+    -   Add the ability to style components using [MUI's `sx` prop](https://mui.com/system/getting-started/the-sx-prop/).
+    -   Add the ability to style individual elements (slots) of a component using the `slotProps` and `sx` props.
+    -   The `# @comet/cms-admin syntax in the theme's `styleOverrides` is no longer supported, see: https://mui.com/material-ui/migration/v5-style-changes/#migrate-theme-styleoverrides-to-emotion
+
+    ```diff
+     const theme = createCometTheme({
+         components: {
+             CometAdminMyComponent: {
+                 styleOverrides: {
+    -                root: {
+    -                    "&$hasShadow": {
+    -                        boxShadow: "2px 2px 5px 0 rgba(0, 0, 0, 0.25)",
+    -                    },
+    -                    "& $header": {
+    -                        backgroundColor: "lime",
+    -                    },
+    -                },
+    +                hasShadow: {
+    +                    boxShadow: "2px 2px 5px 0 rgba(0, 0, 0, 0.25)",
+    +                },
+    +                header: {
+    +                    backgroundColor: "lime",
+    +                },
+                 },
+             },
+         },
+     });
+    ```
+
+    -   Overriding a component's styles using `withStyles` is no longer supported. Use the `sx` and `slotProps` props instead:
+
+    ```diff
+    -import { withStyles } from "@mui/styles";
+    -
+    -const StyledMyComponent = withStyles({
+    -    root: {
+    -        backgroundColor: "lime",
+    -    },
+    -    header: {
+    -        backgroundColor: "fuchsia",
+    -    },
+    -})(MyComponent);
+    -
+    -// ...
+    -
+    -<StyledMyComponent title="Hello World" />;
+    +<MyComponent
+    +    title="Hello World"
+    +    sx={{
+    +        backgroundColor: "lime",
+    +    }}
+    +    slotProps={{
+    +        header: {
+    +            sx: {
+    +                backgroundColor: "fuchsia",
+    +            },
+    +        },
+    +    }}
+    +/>
+    ```
+
+    -   The module augmentation for the `DefaultTheme` type from `@mui/styles/defaultTheme` is no longer needed and needs to be removed from the admins theme file, usually located in `admin/src/theme.ts`:
+
+    ```diff
+    -declare module "@mui/styles/defaultTheme" {
+    -    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    -    export interface DefaultTheme extends Theme {}
+    -}
+    ```
+
+    -   Class-keys originating from MUI components have been removed from Comet Admin components, causing certain class-names and `styleOverrides` to no longer be applied.
+        The components `root` class-key is not affected. Other class-keys will retain the class-names and `styleOverrides` from the underlying MUI component.
+        For example, in `ClearInputAdornment` (when used with `position="end"`) the class-name `CometAdminClearInputAdornment-positionEnd` and the `styleOverrides` for `CometAdminClearInputAdornment.positionEnd` will no longer be applied.
+        The component will retain the class-names `MuiInputAdornment-positionEnd`, `MuiInputAdornment-root`, and `CometAdminClearInputAdornment-root`.
+        Also, the `styleOverrides` for `MuiInputAdornment.positionEnd`, `MuiInputAdornment.root`, and `CometAdminClearInputAdornment.root` will continue to be applied.
+
+        This affects the following components:
+
+        -   `AppHeader`
+        -   `AppHeaderMenuButton`
+        -   `ClearInputAdornment`
+        -   `Tooltip`
+        -   `CancelButton`
+        -   `DeleteButton`
+        -   `OkayButton`
+        -   `SaveButton`
+        -   `StackBackButton`
+        -   `DatePicker`
+        -   `DateRangePicker`
+        -   `TimePicker`
+
+    -   For more details, see MUI's migration guide: https://mui.com/material-ui/migration/v5-style-changes/#mui-styles
+
+-   769bd72f: Uses the Next.JS Preview mode for the site preview
+
+    The preview is entered by navigating to an API-Route in the site, which has to be executed in a secured environment.
+    In the API-Routes the current scope is checked (and possibly stored), then the client is redirected to the Preview.
+
+    // TODO Move the following introduction to the migration guide before releasing
+
+    Requires following changes to site:
+
+    -   Import `useRouter` from `next/router` (not exported from `@comet/cms-site` anymore)
+    -   Import `Link` from `next/link` (not exported from `@comet/cms-site` anymore)
+    -   Remove preview pages (pages in `src/pages/preview/` directory which call `createGetUniversalProps` with preview parameters)
+    -   Remove `createGetUniversalProps`
+        -   Just implement `getStaticProps`/`getServerSideProps` (Preview Mode will SSR automatically)
+        -   Get `previewData` from `context` and use it to configure the GraphQL Client
+    -   Add `SitePreviewProvider` to `App` (typically in `src/pages/_app.tsx`)
+    -   Provide a protected environment for the site
+        -   Make sure that a Authorization-Header is present in this environment
+        -   Add a Next.JS API-Route for the site preview (eg. `/api/site-preview`)
+        -   Call `getValidatedSitePreviewParams()` in the API-Route (calls the API which checks the Authorization-Header with the submitted scope)
+        -   Use the `path`-part of the return value to redirect to the preview
+
+    Requires following changes to admin
+
+    -   The `SitesConfig` must provide a `sitePreviewApiUrl`
+
+### Minor Changes
+
+-   e10753b: Allow disabling the "Open preview" button in the `PageTree` for certain document types
+
+    The "Open preview" button is shown for all document types in the `PageTree`.
+    But some document types (e.g., links) don't have a preview.
+    Clicking on the preview button leads to an error page.
+
+    Now, it's possible to disable the button by setting `hasNoSitePreview` for the document:
+
+    ```diff
+    export const Link: DocumentInterface<Pick<GQLLink, "content">, GQLLinkInput> = {
+        // ...
+    +   hasNoSitePreview: true,
+    };
+    ```
+
+-   2486e8a9: Add future Admin Generator that works with configuration files
+-   5c550073: Remove "Re-login"-button from `CurrentUserProvider`
+
+    The button is already implemented in `createErrorDialogApolloLink()`. The correct arrangement of
+    the components in `App.tsx` (see migration guide) makes the double implementation needless.
+
+-   3b1dc72d: Adapt `Header` and `UserHeaderItem` used in `AppHeader` for mobile devices (<900px)
+
+### Patch Changes
+
+-   Updated dependencies [865f253d]
+-   Updated dependencies [05ce68ec]
+-   Updated dependencies [51a0861d]
+-   Updated dependencies [803bc607]
+-   Updated dependencies [54f7754]
+-   Updated dependencies [33ba5071]
+-   Updated dependencies [73140014]
+-   Updated dependencies [33ba5071]
+-   Updated dependencies [ad73068f]
+-   Updated dependencies [6054fdca]
+-   Updated dependencies [53544462]
+-   Updated dependencies [d0869ac]
+-   Updated dependencies [47ec528a]
+-   Updated dependencies [33ba5071]
+-   Updated dependencies [956111ab]
+-   Updated dependencies [f9615fbf]
+-   Updated dependencies [19eaee4c]
+-   Updated dependencies [758c6565]
+-   Updated dependencies [cb544bc]
+-   Updated dependencies [04ed68cc]
+-   Updated dependencies [4ca4830]
+-   Updated dependencies [3397ec1]
+-   Updated dependencies [20b2bafd]
+-   Updated dependencies [8e3dec5]
+-   Updated dependencies [33ba5071]
+-   Updated dependencies [51a0861d]
+-   Updated dependencies [b5753e61]
+-   Updated dependencies [2a7bc765]
+-   Updated dependencies [f8114cd3]
+-   Updated dependencies [b87c3c29]
+-   Updated dependencies [cce88d44]
+-   Updated dependencies [2a7bc765]
+-   Updated dependencies [b87c3c29]
+-   Updated dependencies [d2e64d1e]
+-   Updated dependencies [865f253d]
+-   Updated dependencies [f8114cd3]
+-   Updated dependencies [241249bd]
+-   Updated dependencies [be4e6392]
+-   Updated dependencies [a5354543]
+-   Updated dependencies [1a1d8315]
+-   Updated dependencies [a2f278bb]
+-   Updated dependencies [66330e4e]
+-   Updated dependencies [92eae2ba]
+-   Updated dependencies [33ba5071]
+    -   @comet/admin@7.0.0-beta.0
+    -   @comet/admin-theme@7.0.0-beta.0
+    -   @comet/admin-date-time@7.0.0-beta.0
+    -   @comet/admin-rte@7.0.0-beta.0
+    -   @comet/blocks-admin@7.0.0-beta.0
+    -   @comet/admin-icons@7.0.0-beta.0
+
 ## 6.10.0
 
 ### Minor Changes
