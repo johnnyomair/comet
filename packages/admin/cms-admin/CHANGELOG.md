@@ -1,5 +1,21 @@
 # @comet/cms-admin
 
+## 7.0.0-beta.1
+
+### Major Changes
+
+-   107df9f: Test change
+
+### Patch Changes
+
+-   Updated dependencies [107df9f]
+    -   @comet/admin-date-time@7.0.0-beta.1
+    -   @comet/blocks-admin@7.0.0-beta.1
+    -   @comet/admin-theme@7.0.0-beta.1
+    -   @comet/admin-rte@7.0.0-beta.1
+    -   @comet/admin@7.0.0-beta.1
+    -   @comet/admin-icons@7.0.0-beta.1
+
 ## 7.0.0-beta.0
 
 ### Major Changes
