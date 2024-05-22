@@ -1,5 +1,34 @@
 # @comet/cms-admin
 
+## 6.11.0
+
+### Minor Changes
+
+-   e10753b: Allow disabling the "Open preview" button in the `PageTree` for certain document types
+
+    The "Open preview" button is shown for all document types in the `PageTree`.
+    But some document types (e.g., links) don't have a preview.
+    Clicking on the preview button leads to an error page.
+
+    Now, it's possible to disable the button by setting `hasNoSitePreview` for the document:
+
+    ```diff
+    export const Link: DocumentInterface<Pick<GQLLink, "content">, GQLLinkInput> = {
+        // ...
+    +   hasNoSitePreview: true,
+    };
+    ```
+
+### Patch Changes
+
+-   Updated dependencies [8e3dec5]
+    -   @comet/admin@6.11.0
+    -   @comet/admin-date-time@6.11.0
+    -   @comet/admin-icons@6.11.0
+    -   @comet/admin-rte@6.11.0
+    -   @comet/admin-theme@6.11.0
+    -   @comet/blocks-admin@6.11.0
+
 ## 6.10.0
 
 ### Minor Changes
