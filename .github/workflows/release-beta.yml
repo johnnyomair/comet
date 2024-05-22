@@ -8,23 +8,23 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-    check-if-prelease-mode:
-        name: Check if in Prelease Mode
+    check-if-prerelease-mode:
+        name: Check if in Prerelease Mode
         runs-on: ubuntu-latest
         outputs:
-            status: ${{ steps.check-if-prelease-mode.conclusion }}
+            in-prerelease-mode: ${{ steps.check-if-prerelease-mode.outputs.in-prerelease-mode }}
         steps:
-            - id: check-if-prelease-mode
-              name: Check if in Prelease Mode
+            - id: check-if-prerelease-mode
+              name: Check if in Prerelease Mode
               run: |
                   if [ -f ".changeset/pre.json" ]; then
-                      exit 0
+                      echo "in-prerelease-mode=true" >> $GITHUB_OUTPUT
                   else
-                      exit 1
+                      echo "in-prerelease-mode=false" >> $GITHUB_OUTPUT
                   fi
     release-beta:
-        needs: check-if-prelease-mode
-        if: needs.check-if-prelease-mode.outputs.status == 'success'
+        needs: check-if-prerelease-mode
+        if: needs.check-if-prerelease-mode.outputs.in-prerelease-mode == 'true'
         name: Release Beta
         runs-on: ubuntu-latest
         steps:
