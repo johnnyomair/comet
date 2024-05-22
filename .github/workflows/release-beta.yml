@@ -1,0 +1,74 @@
+name: Release Beta
+
+on:
+    push:
+        branches:
+            - next
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+    check-if-prelease-mode:
+        name: Check if in Prelease Mode
+        runs-on: ubuntu-latest
+        outputs:
+            status: ${{ steps.check-if-prelease-mode.conclusion }}
+        steps:
+            - id: check-if-prelease-mode
+              name: Check if in Prelease Mode
+              run: |
+                  if [ -f ".changeset/pre.json" ]; then
+                      exit 0
+                  else
+                      exit 1
+                  fi
+    release-beta:
+        needs: check-if-prelease-mode
+        if: needs.check-if-prelease-mode.outputs.status == 'success'
+        name: Release Beta
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repo
+              uses: actions/checkout@v3
+
+            - uses: pnpm/action-setup@v2
+              if: ${{ hashFiles('.changeset/pre.json') != '' }}
+              with:
+                  version: 8
+
+            - name: Use Node.js 18.x
+              uses: actions/setup-node@v3
+              if: ${{ hashFiles('.changeset/pre.json') != '' }}
+              with:
+                  node-version: 18
+                  registry-url: "https://registry.npmjs.org"
+                  cache: "pnpm" # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-dependencies
+
+            - name: Install Dependencies
+              if: ${{ hashFiles('.changeset/pre.json') != '' }}
+              run: pnpm install --frozen-lockfile
+
+            - name: Copy schema files
+              if: ${{ hashFiles('.changeset/pre.json') != '' }}
+              run: pnpm run copy-schema-files
+
+            - name: Get version to be published
+              if: ${{ hashFiles('.changeset/pre.json') != '' }}
+              run: |
+                  cd packages/admin/admin
+                  echo "PUBLISHED_VERSION=$(pnpm pkg get version | sed -r 's/"//g')" >> $GITHUB_ENV
+
+            - name: Create Release Pull Request or Publish to npm
+              id: changesets
+              uses: dotansimha/changesets-action@cbc5ff3569ae9861100a48b290f4e9c1b94e45b5
+              with:
+                  version: pnpm run version
+                  publish: pnpm run publish
+                  title: "Version Packages (Beta)"
+                  createGithubReleases: aggregate
+                  githubReleaseName: "${{ env.PUBLISHED_VERSION }}"
+                  githubTagName: "v${{ env.PUBLISHED_VERSION }}"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  #NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  HUSKY: 0 # https://typicode.github.io/husky/#/?id=with-env-variables
